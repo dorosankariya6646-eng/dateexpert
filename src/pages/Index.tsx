@@ -1,20 +1,14 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { VoiceAgent } from '@/components/VoiceAgent';
 import { ChatAgent } from '@/components/ChatAgent';
 import { FeatureCard } from '@/components/FeatureCard';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
-import { Heart, MessageCircle, Shield, Sparkles, ArrowRight, Mic, LogOut, User } from 'lucide-react';
-
-type Mode = 'none' | 'voice' | 'chat';
+import { Heart, MessageCircle, Shield, Sparkles, ArrowRight, LogOut, User } from 'lucide-react';
 
 const Index = () => {
-  const [mode, setMode] = useState<Mode>('none');
+  const [showChat, setShowChat] = useState(false);
   const { user, signOut } = useAuth();
-  
-  // Replace with your ElevenLabs public agent ID
-  const AGENT_ID = 'your-agent-id-here';
 
   return (
     <div className="min-h-screen gradient-background">
@@ -53,7 +47,7 @@ const Index = () => {
 
           {/* Main content */}
           <div className="max-w-4xl mx-auto text-center">
-            {mode === 'none' ? (
+            {!showChat ? (
               <div className="animate-fade-in space-y-8">
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
                   <Sparkles className="h-4 w-4" />
@@ -74,21 +68,12 @@ const Index = () => {
                   <Button 
                     variant="hero" 
                     size="xl"
-                    onClick={() => setMode('voice')}
-                    className="group"
-                  >
-                    <Mic className="h-5 w-5 mr-2" />
-                    Start Talking
-                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="xl"
-                    onClick={() => setMode('chat')}
+                    onClick={() => setShowChat(true)}
                     className="group"
                   >
                     <MessageCircle className="h-5 w-5 mr-2" />
-                    Chat Instead
+                    Start Chatting
+                    <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">Free • No signup required</p>
@@ -103,37 +88,13 @@ const Index = () => {
                     I'm here to help. What's on your mind?
                   </p>
                 </div>
-
-                {/* Mode toggle tabs */}
-                <div className="flex justify-center gap-2 mb-8">
-                  <Button
-                    variant={mode === 'voice' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setMode('voice')}
-                  >
-                    <Mic className="h-4 w-4 mr-2" />
-                    Voice
-                  </Button>
-                  <Button
-                    variant={mode === 'chat' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setMode('chat')}
-                  >
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Chat
-                  </Button>
-                </div>
                 
-                {mode === 'voice' ? (
-                  <VoiceAgent agentId={AGENT_ID} />
-                ) : (
-                  <ChatAgent />
-                )}
+                <ChatAgent />
                 
                 <Button
                   variant="ghost"
                   className="mt-8 text-muted-foreground"
-                  onClick={() => setMode('none')}
+                  onClick={() => setShowChat(false)}
                 >
                   ← Back to home
                 </Button>
@@ -144,7 +105,7 @@ const Index = () => {
       </div>
 
       {/* Features Section */}
-      {mode === 'none' && (
+      {!showChat && (
         <section className="container mx-auto px-4 py-20">
           <div className="text-center mb-12">
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mb-4">
